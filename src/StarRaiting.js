@@ -22,6 +22,7 @@ const textStyle = { lineHeight: "1", margin: 0 };
 
 export default function StarRaiting({ maxRaiting = 5 }) {
   const [raiting, setRaiting] = useState(0);
+  const [tempRaiting, setTempRaiting] = useState(0);
 
   function handleRate(raiting) {
     setRaiting(raiting);
@@ -34,19 +35,29 @@ export default function StarRaiting({ maxRaiting = 5 }) {
             <Star
               key={index}
               onRate={() => handleRate(index + 1)}
-              full={raiting >= index + 1}
+              full={
+                tempRaiting ? tempRaiting >= index + 1 : raiting >= index + 1
+              }
+              onHoverIn={() => setTempRaiting(index + 1)}
+              onHoverOut={() => setTempRaiting(0)}
             />
           </span>
         ))}
       </div>
-      <p style={textStyle}>{raiting || ""}</p>
+      <p style={textStyle}>{tempRaiting || raiting || ""}</p>
     </div>
   );
 }
 
-function Star({ onRate, full }) {
+function Star({ onRate, full, onHoverIn, onHoverOut }) {
   return (
-    <span role="button" onClick={onRate} style={starStyle}>
+    <span
+      role="button"
+      onClick={onRate}
+      style={starStyle}
+      onMouseEnter={onHoverIn}
+      onMouseLeave={onHoverOut}
+    >
       {full ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"
