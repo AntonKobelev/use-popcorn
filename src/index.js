@@ -10,7 +10,7 @@ function Test() {
   return (
     <>
       <StarRaiting
-        maxRaiting={10}
+        maxRaiting={11}
         color="green"
         size={48}
         initialRaiting={0}
