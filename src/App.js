@@ -184,6 +184,14 @@ function MovieDetails({
 }) {
   const [movie, setMovie] = useState({});
   const [userRating, setUserRating] = useState("");
+  const userClickedRaiting = useRef(0);
+
+  useEffect(
+    function () {
+      if (userRating) userClickedRaiting.current++;
+    },
+    [userRating]
+  );
 
   const isWatchingMovie = watched.some((movie) =>
     movie.imdbID.includes(selectedId)
@@ -215,6 +223,7 @@ function MovieDetails({
       runtime: Number(runtime.split(" ").at(0)) || 0,
       userRating,
       imdbID,
+      userClickedRaiting: userClickedRaiting.current,
     };
     onAddWatchedMovie(newMovie);
     // setAvrRaiting(Number(imdbRating));
