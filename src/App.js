@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import StarRaiting from "./StarRaiting";
+import { useMovies } from "./useMovies";
+
+const apiKeyOmdb = process.env.REACT_APP_API_KEY;
 
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
@@ -55,12 +58,7 @@ function NumResults({ movies }) {
   );
 }
 
-const apiKeyOmdb = process.env.REACT_APP_API_KEY;
-
 export default function App() {
-  const [movies, setMovies] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState(null);
   const [watched, setWatched] = useState(function () {
@@ -82,11 +80,10 @@ export default function App() {
   }
 
   function handleDeleteMovieFromWatched(id) {
-    console.log(id);
-    console.log(watched);
     setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
-    console.log(watched);
   }
+
+  const { error, isLoading, movies } = useMovies(query);
 
   useEffect(
     function () {
@@ -95,47 +92,6 @@ export default function App() {
     [watched]
   );
 
-  useEffect(
-    function () {
-      const controller = new AbortController();
-      async function fetchData() {
-        try {
-          setError("");
-          // setMovies([]);
-          setIsLoading(true);
-
-          const res = await fetch(
-            `http://www.omdbapi.com/?apikey=${apiKeyOmdb}&s=${query}`,
-            { signal: controller.signal }
-          );
-          const data = await res.json();
-
-          if (data.Response === "False") {
-            throw new Error("Movie is not found");
-          }
-          setMovies(data.Search);
-          setError("");
-        } catch (err) {
-          if (err.name !== "AbortError") {
-            setError(err.message);
-          }
-        } finally {
-          setIsLoading(false);
-        }
-      }
-      if (query.length < 3) {
-        setError("");
-        setMovies([]);
-        return;
-      }
-      fetchData();
-
-      return function () {
-        controller.abort();
-      };
-    },
-    [query]
-  );
   return (
     <>
       <NavBar>
