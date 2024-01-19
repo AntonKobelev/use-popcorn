@@ -44,7 +44,7 @@ export function useMovies(query) {
         controller.abort();
       };
     },
-    [query, setMovies]
+    [query]
   );
   return { error, isLoading, movies };
 }

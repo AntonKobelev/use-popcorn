@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import StarRaiting from "./StarRaiting";
 import { useMovies } from "./useMovies";
+import { useLocalStorageState } from "./useLocalSrorageState";
 
 const apiKeyOmdb = process.env.REACT_APP_API_KEY;
 
@@ -61,10 +62,7 @@ function NumResults({ movies }) {
 export default function App() {
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState(null);
-  const [watched, setWatched] = useState(function () {
-    const moviesFromStorage = localStorage.getItem("watched");
-    return JSON.parse(moviesFromStorage);
-  });
+  const [watched, setWatched] = useLocalStorageState([], "watched");
 
   function handleSelectedMovie(id) {
     setSelectedId((selectedId) => (selectedId === id ? null : id));
@@ -84,13 +82,6 @@ export default function App() {
   }
 
   const { error, isLoading, movies } = useMovies(query);
-
-  useEffect(
-    function () {
-      localStorage.setItem("watched", JSON.stringify(watched));
-    },
-    [watched]
-  );
 
   return (
     <>
