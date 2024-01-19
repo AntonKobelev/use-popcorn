@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import StarRaiting from "./StarRaiting";
 import { useMovies } from "./useMovies";
 import { useLocalStorageState } from "./useLocalSrorageState";
+import { useKey } from "./useKey";
 
 const apiKeyOmdb = process.env.REACT_APP_API_KEY;
 
@@ -23,22 +24,13 @@ function Logo() {
 
 function Search({ query, setQuery }) {
   const inputElement = useRef(null);
-  useEffect(
-    function () {
-      function callback(e) {
-        if (document.activeElement === inputElement.current) return;
-        if (e.key === "Enter") {
-          inputElement.current.focus();
-          setQuery("");
-        }
-      }
-      document.addEventListener("keydown", callback);
-      return () => document.removeEventListener("keydown", callback);
-      // const element = document.querySelector(".search");
-      // element.focus();
-    },
-    [setQuery]
-  );
+
+  useKey("Enter", function () {
+    if (document.activeElement === inputElement.current) return;
+    inputElement.current.focus();
+    setQuery("");
+  });
+
   return (
     <input
       className="search"
@@ -182,20 +174,7 @@ function MovieDetails({
     setUserRating(raiting);
   }
 
-  useEffect(
-    function () {
-      const closeMovieWithKeyDown = function (event) {
-        if (event.key === "Escape") {
-          onCloseMovie();
-        }
-      };
-      document.addEventListener("keydown", closeMovieWithKeyDown);
-      // document.removeEventListener("keydown", closeMovieWithKeyDown);
-      return () =>
-        document.removeEventListener("keydown", closeMovieWithKeyDown);
-    },
-    [onCloseMovie]
-  );
+  useKey("Escape", onCloseMovie);
 
   useEffect(
     function () {
